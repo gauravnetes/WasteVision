@@ -42,7 +42,7 @@ class Zone(Base):
     id = Column(Integer, primary_key=True, index=True)
     public_id = Column(UUID(as_uuid=True), default=uuid.uuid4, unique=True, nullable=False, index=True)
     campus_id = Column(Integer, ForeignKey("campuses.id"), nullable=False)
-    zone_code = Column(String(20), nullable=False, index=True)
+    zone_code = Column(String(50), nullable=False, index=True)
     geo_boundary = Column(JSON, nullable=False)
     current_status = Column(String(10), nullable=False, default='Green')
     last_waste_score = Column(Integer, default=0)
