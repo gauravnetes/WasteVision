@@ -68,15 +68,15 @@ export const CardCarousel: React.FC<CarouselProps> = ({
             className="absolute left-4 top-6 rounded-[14px] border border-black/10 text-base md:left-6"
           >
             <SparklesIcon className="fill-[#EEBDE0] stroke-1 text-neutral-800" />{" "}
-            Latest component
+            Exclusive Drop
           </Badge>
           <div className="flex flex-col justify-center pb-2 pl-4 pt-14 md:items-center">
             <div className="flex gap-2">
               <div>
                 <h3 className="text-4xl opacity-85 font-bold tracking-tight">
-                  Card Carousel
+                  Vision in Action
                 </h3>
-                <p>Seamless Images carousel animation.</p>
+                <p>Turn insights into efficient action..</p>
               </div>
             </div>
           </div>
