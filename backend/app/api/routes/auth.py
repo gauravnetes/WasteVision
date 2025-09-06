@@ -8,6 +8,7 @@ from app.core import security
 from app.core import email as email_utils
 from app.schemas import user as user_schema 
 from app.schemas import token as token_schema
+from app.models import models
 
 router = APIRouter()
 

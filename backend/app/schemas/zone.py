@@ -10,3 +10,8 @@ class MapZone(BaseModel):
     
     class Config: 
         from_attributes = True
+        
+        
+class ZoneUpdate(BaseModel): 
+    public_id: uuid.UUID
+    geo_boundary: dict

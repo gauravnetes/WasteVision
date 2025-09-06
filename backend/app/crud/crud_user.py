@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 import random
 import string
 from datetime import datetime, timedelta
@@ -7,7 +7,10 @@ from app.schemas import user as user_schema
 from app.core.security import get_password_hash
 
 def get_user_by_email(db: Session, email: str): 
-    return db.query(models.User).filter(models.User.email == email).first()
+    return db.query(models.User).options(
+        joinedload(models.User.campus)
+    ).filter(models.User.email == email).first()
+
 
 def create_user(db: Session, user: user_schema.UserCreate): 
     hashed_password = get_password_hash(user.password)
