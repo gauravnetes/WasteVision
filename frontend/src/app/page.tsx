@@ -52,24 +52,25 @@ export default function Home() {
   ];
   const demoItems = [
     {
-      link: "#",
-      text: "Mojave",
-      image: "https://picsum.photos/600/400?random=1",
+      link: "/dashboard",
+      text: "DASHBOARD",
+      image: "https://i.pinimg.com/1200x/c9/35/55/c93555a6b3b0a0686a0b09d16e0bef5d.jpg",
     },
     {
-      link: "#",
-      text: "Sonoma",
-      image: "https://picsum.photos/600/400?random=2",
+      link: "/about",
+      text: "About US",
+      image: "https://i.pinimg.com/1200x/4f/af/60/4faf60092548dd0ad2127a803b278c7c.jpg",
     },
     {
-      link: "#",
-      text: "Monterey",
-      image: "https://picsum.photos/600/400?random=3",
+      link: "/business_model",
+      text: "OUR BUSINESS MODEL",
+      image: "https://i.pinimg.com/736x/49/6d/45/496d45a6ff71567117d27f0dec22be86.jpg",
     },
     {
-      link: "#",
-      text: "Sequoia",
-      image: "https://picsum.photos/600/400?random=4",
+      link: "/contact",
+      text: "Contact Us",
+      image: "https://i.pinimg.com/736x/9c/bd/5b/9cbd5be4e4072cc57cf374200fc242d3.jpg",
+
     },
   ];
   return (
