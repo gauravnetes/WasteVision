@@ -148,47 +148,23 @@ export default function Navbar() {
 
   return (
     <nav className="fixed font-custom h-36 top-0 left-0 w-full z-[999] px-6 md:px-10 py-5 flex items-center justify-between">
-      <div className="flex items-center gap-5 cursor-pointer mb-10">
-        <div className="mt-10">
+      <div className="flex items-center gap-2 cursor-pointer mb-10">
+        <div className="mt-5">
           <ThemeToggleButton />
         </div>
 
         {/* Transparent container with balanced blobs */}
-        <div className="relative flex justify-center items-center w-60 h-20 mt-4">
-          {/* Top-left blob (half hidden) */}
-          <div className="absolute top-2 left-2 w-7 h-7 bg-pink-500 rounded-full"></div>
-
-          {/* Top-right blob (half hidden) */}
-          <div className="absolute top-2 right-3 w-7 h-7 bg-purple-500 rounded-full"></div>
-
-          {/* Bottom blob (half hidden, centered) */}
-          <div className="absolute -bottom-2 right-12 -translate-x-1/2 w-9 h-9 bg-blue-500 rounded-full"></div>
-
-          {/* Transparent glass container */}
-          <div
-            className="relative bg-white/20 dark:bg-black/30 backdrop-blur-xl 
-                  border border-white/30 dark:border-gray-700 
-                  rounded-2xl px-6 py-2 shadow-lg"
-          >
-            <Link href="/">
-              <Image
-                className="cursor-pointer block dark:hidden"
-                src="/images/logo_light.png"
-                alt="Site Logo"
-                width={150}
-                height={150}
-                priority
-              />
-              <Image
-                className="cursor-pointer hidden dark:block"
-                src="/images/logo_dark.png"
-                alt="Site Logo"
-                width={150}
-                height={150}
-                priority
-              />
-            </Link>
-          </div>
+        <div className="relative flex justify-center items-center w-72 h-20 mt-4">
+          <Link href="/">
+            <Image
+              className="cursor-pointer pr-4"
+              src="/images/logo_dark.png"
+              alt="Site Logo"
+              width={350}
+              height={350}
+              priority
+            />
+          </Link>
         </div>
       </div>
 
