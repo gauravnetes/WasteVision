@@ -1,6 +1,6 @@
 from typing import Generator
 from fastapi import Depends, HTTPException, status
-from jose import JWTError, jwt
+from jose import jwt, JWTError
 from sqlalchemy.orm import Session
 
 from app.core import security 

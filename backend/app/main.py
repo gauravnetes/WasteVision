@@ -1,16 +1,30 @@
 # app/main.py
 from fastapi import FastAPI
 from app.api.routes import auth, zones
+from fastapi.middleware.cors import CORSMiddleware
 from app.models.models import Base, engine
 
 # This is the crucial line that creates the database tables.
 # It uses the "blueprints" from your models.py file.
 Base.metadata.create_all(bind=engine)
 
+origins = [
+    "http://localhost:3000"
+]
+
 app = FastAPI(
     title="WasteVision API",
     description="Backend for the WasteVision.",
     version="1.0.0",
+)
+
+
+app.add_middleware(
+    CORSMiddleware, 
+    allow_origins = origins, 
+    allow_credentials = True, 
+    allow_methods = ["*"], 
+    allow_headers = ["*"]
 )
 
 # Include API routers from other files
