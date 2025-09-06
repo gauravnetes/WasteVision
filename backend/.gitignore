@@ -1,1 +1,36 @@
+
+# Never commit your environment variables file.
+.env
+*.env
+
+# --- Virtual Environment ---
+# Ignore the virtual environment folder.
 .venv
+venv/
+env/
+
+
+# --- Python Cache ---
+# Ignore compiled Python files and cache folders.
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+
+# --- IDE / Editor Folders ---
+# Ignore settings folders from popular editors.
+.vscode/
+.idea/
+
+
+
+.DS_Store
+Thumbs.db
+
+# --- Testing Artifacts ---
+# Ignore pytest cache and coverage reports.
+.pytest_cache/
+htmlcov/
+.coverage
+
