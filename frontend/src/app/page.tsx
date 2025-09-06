@@ -40,12 +40,15 @@ export default function Home() {
     }
   };
   const images = [
-    { src: "/cards/1.png", alt: "Image 1" },
-    { src: "/cards/2.webp", alt: "Image 2" },
-    { src: "/cards/3.webp", alt: "Image 3" },
-    { src: "/cards/1.webp", alt: "Image 1" },
-    { src: "/cards/2.webp", alt: "Image 2" },
-    { src: "/cards/3.webp", alt: "Image 3" },
+    { src: "/cards/1.jpg", alt: "Image 1" },
+    { src: "/cards/2.jpg", alt: "Image 2" },
+    { src: "/cards/3.jpg", alt: "Image 3" },
+    { src: "/cards/4.jpg", alt: "Image 1" },
+    { src: "/cards/2.jpg", alt: "Image 2" },
+    { src: "/cards/3.jpg", alt: "Image 3" },
+    { src: "/cards/2.jpg", alt: "Image 2" },
+    { src: "/cards/3.jpg", alt: "Image 3" },
+
   ];
   const demoItems = [
     {
