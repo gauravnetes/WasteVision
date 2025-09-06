@@ -34,26 +34,32 @@ def search_campuses(
     state: Optional[str] = None, 
     city: Optional[str] = None, 
     q: Optional[str] = None, 
-    limit: int = 20 
-) -> List[models.Campus]:
+    limit: int = 20
+):
     query = db.query(models.Campus)
     
-    if state: 
-        query = query.filter(models.Campus.state == state)
+    if state:
+        query = query.filter(models.Campus.state.ilike(f"%{state}%"))
         
-    if city: 
-        query = query.filter(models.Campus.city == city)
+    if city:
+        query = query.filter(models.Campus.city.ilike(f"%{city}%"))
         
-    if q: 
-        search_pattern = f"%{q}%" 
+    if q:
+        search_pattern = f"%{q}%"
         query = query.filter(
-            or_ (
-                models.Campus.name.ilike(search_pattern), 
-                models.Campus.city.ilike(search_pattern), 
-                models.Campus.state.ilike(search_pattern)
+            or_(
+                models.Campus.name.ilike(search_pattern),
+                models.Campus.city.ilike(search_pattern),
+                models.Campus.state.ilike(search_pattern),
             )
         )
-        
+        results = query.order_by(models.Campus.name).limit(limit).all()
+        print(f"🔍 Search campuses q='{q}' state='{state}' city='{city}' -> {len(results)} results")
+        return results
+    if not q and not city and not state:
+        return []
+
+
     return query.order_by(models.Campus.name).limit(limit).all()
     
 
@@ -64,3 +70,20 @@ def get_campus_by_details(db: Session, name: str, city: str, state: str) -> Opti
         city=city, 
         state=state
     ).first()
+
+
+def get_campus_by_id(db: Session, campus_id: int) -> Optional[models.Campus]:
+    return db.query(models.Campus).filter(models.Campus.id == campus_id).first()
+
+
+# campus location getting updated by the user 
+def update_campus_location(db: Session, campus_id: int, lat: float, lon: float) -> models.Campus: 
+    db_campus = db.query(models.Campus).filter(models.Campus.id == campus_id).first()
+    if db_campus: 
+        db_campus.center_latitude = lat
+        db_campus.center_longitude = lon
+        db.commit()
+        db.refresh(db_campus)
+        
+    return db_campus
+        
