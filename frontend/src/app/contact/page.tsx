@@ -79,7 +79,7 @@ export default function GetStarted() {
     <div className="min-h-screen flex flex-col">
       <Navbar />
 
-      <main className="flex-grow pt-14 md:pt-10">
+      <main className="flex-grow pt-14 md:pt-18">
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-background to-secondary/5 py-28">
           <div className="container mx-auto px-6 text-center">
@@ -87,7 +87,7 @@ export default function GetStarted() {
               className="text-3xl md:text-4xl lg:text-6xl font-extrabold tracking-tight 
              text-gray-900 dark:text-white drop-shadow-lg"
             >
-              Vision Connect
+              Get Started with Waste Vision
             </FlipText>
             <p className="mt-6 text-lg md:text-xl max-w-2xl mx-auto text-muted-foreground leading-relaxed">
               Have questions about Waste Vision? Get in touch and discover how

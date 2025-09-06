@@ -90,7 +90,9 @@ export default function Home() {
                 Detect. Measure. Manage Waste Smarter.
               </h1>
               <p className="text-lg font-custom font-bold md:text-xl mb-10 max-w-6xl text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                Lorem ipsum dolor sit amet consectetur.
+                Empowering institutions with AI-driven insights for a cleaner, sustainable future.
+
+
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <a
@@ -187,7 +189,7 @@ export default function Home() {
                 <TiltedCard
                   imageSrc="/images/card.jpg"
                   altText="amader valaobashar waste detection system"
-                  captionText="Hey Gour Da Look At Me"
+                  captionText="Measure. Manage. Minimize."
                   containerHeight="400px"
                   containerWidth="400px"
                   imageHeight="400px"
@@ -199,7 +201,7 @@ export default function Home() {
                   displayOverlayContent={true}
                   overlayContent={
                     <p className="tilted-card-demo-text">
-                      Hey Gour Da Look At Me
+                      Measure. Manage. Minimize.
                     </p>
                   }
                 />
