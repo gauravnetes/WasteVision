@@ -1,23 +1,37 @@
 "use client";
-import Image from "next/image";
+
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import ThemeToggleButton from "@/components/ui/theme-toggle-button";
+import { useState } from "react";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  MessageSquare,
+  HelpCircle,
+  Cpu,
+  Users,
+  Workflow,
+  CpuIcon,
+  BookOpen,
+  CheckCircle2,
+  Headphones,
+} from "lucide-react";
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import { HelpCircle, Cpu, Users, Workflow } from "lucide-react";
-import { useState } from "react";
-import { ShimmerButton } from "@/components/ui/ShimmerButton";
-import { FlipText } from "@/components/ui/FlipText";
+import { motion } from "framer-motion";
 
-export default function GetStarted() {
+
+
+
+export default function ContactUs() {
   const [status, setStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,21 +39,18 @@ export default function GetStarted() {
     setStatus(null);
 
     const form = e.currentTarget;
-
     const data = {
       firstName: (form.elements.namedItem("firstName") as HTMLInputElement)
         ?.value,
       lastName: (form.elements.namedItem("lastName") as HTMLInputElement)
         ?.value,
-      email: (form.elements.namedItem("email") as HTMLInputElement)?.value,
       institution: (form.elements.namedItem("institution") as HTMLInputElement)
         ?.value,
-      role: (form.elements.namedItem("role") as HTMLSelectElement)?.value,
+      role: (form.elements.namedItem("role") as HTMLInputElement)?.value,
+      email: (form.elements.namedItem("email") as HTMLInputElement)?.value,
+      phone: (form.elements.namedItem("phone") as HTMLInputElement)?.value,
       message: (form.elements.namedItem("message") as HTMLTextAreaElement)
         ?.value,
-      consent: (form.elements.namedItem("consent") as HTMLInputElement)?.checked
-        ? "Yes"
-        : "No",
     };
 
     try {
@@ -55,413 +66,354 @@ export default function GetStarted() {
       const result = await res.json();
 
       if (res.ok) {
-        setStatus("✅ Thank you! Your request has been submitted.");
-        setShowModal(true);
+        setShowSuccess(true);
         form.reset();
       } else if (result?.errors) {
         setStatus(
           `❌ ${result.errors.map((err: any) => err.message).join(", ")}`
         );
-        setShowModal(true);
       } else {
         setStatus("❌ Something went wrong. Please try again later.");
-        setShowModal(true);
       }
     } catch (error) {
       setStatus("⚠ Network error. Please check your connection.");
-      setShowModal(true);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background text-foreground relative">
       <Navbar />
 
-      <main className="flex-grow pt-14 md:pt-10">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-b from-background to-secondary/5 py-28">
-          <div className="container mx-auto px-6 text-center">
-            <FlipText
-              className="text-3xl md:text-4xl lg:text-6xl font-extrabold tracking-tight 
-             text-gray-900 dark:text-white drop-shadow-lg"
-            >
-              Vision Connect
-            </FlipText>
-            <p className="mt-6 text-lg md:text-xl max-w-2xl mx-auto text-muted-foreground leading-relaxed">
-              Have questions about Waste Vision? Get in touch and discover how
-              we can help your institution manage waste smarter.
+      {/* Success Overlay */}
+      {showSuccess && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md"
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            className="bg-card p-10 rounded-2xl shadow-2xl text-center max-w-md mx-auto"
+          >
+            <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2">Thank You!</h2>
+            <p className="text-muted-foreground mb-6">
+              Your message has been successfully sent. Our team will reach out
+              to you soon.
             </p>
-          </div>
-        </section>
+            <button
+              onClick={() => setShowSuccess(false)}
+              className="px-6 py-2 rounded-lg bg-foreground text-background font-semibold hover:opacity-80 transition"
+            >
+              Close
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
 
-        {/* Contact Form Section */}
-        <section className="py-24 bg-gradient-to-br from-background to-muted/40 relative overflow-hidden">
-          <div className="container mx-auto max-w-7xl px-6 lg:px-12">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
-              {/* Left Card: Contact Form */}
-              <div className="group relative h-full flex">
-                <div className="p-[1px] rounded-3xl bg-gradient-to-r from-green-400/60 via-green-300/40 to-green-500/60 flex flex-col w-full">
-                  <div
-                    className="h-full flex flex-col bg-white dark:bg-black backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-white/20 
-            transition-transform duration-300 group-hover:scale-[1.02] group-hover:shadow-green-400/30"
-                  >
-                    <div className="mb-6">
-                      <h3
-                        className="text-2xl md:text-3xl font-extrabold text-center 
-                bg-clip-text text-transparent
-                bg-gradient-to-r from-green-500 to-green-300
-                dark:from-green-400 dark:to-green-200
-                drop-shadow-md animate-textGlow"
-                      >
-                        Request a Consultation
-                      </h3>
-                      <p className="text-center text-sm md:text-base text-muted-foreground mt-2">
-                        Fill out the form below and our team will respond within
-                        <span className="font-semibold text-green-600 dark:text-green-400">
-                          {" "}
-                          24 hours
-                        </span>
-                        .
-                      </p>
-                    </div>
+      {/* Hero Section */}
+      <section className="text-center py-20 mt-10">
+        <h1 className="text-5xl font-bold mb-4">Vision Connect</h1>
+        <p className="text-lg text-muted-foreground">
+          Have questions about Waste Vision? Get in touch and discover how we
+          can help your institution manage waste smarter.
+        </p>
+      </section>
 
-                    <form
-                      onSubmit={handleSubmit}
-                      className="space-y-6 flex-1 flex flex-col justify-between"
-                    >
-                      <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div>
-                            <label
-                              htmlFor="firstName"
-                              className="block text-sm font-medium mb-2"
-                            >
-                              First Name
-                            </label>
-                            <input
-                              type="text"
-                              id="firstName"
-                              name="firstName"
-                              className="w-full p-3 rounded-xl border border-muted bg-white dark:bg-black text-black dark:text-white placeholder:text-gray-400 
-                                 focus:outline-none focus:ring-2 focus:ring-primary"
-                              placeholder="John"
-                              required
-                            />
-                          </div>
-                          <div>
-                            <label
-                              htmlFor="lastName"
-                              className="block text-sm font-medium mb-2"
-                            >
-                              Last Name
-                            </label>
-                            <input
-                              type="text"
-                              id="lastName"
-                              name="lastName"
-                              className="w-full p-3 rounded-xl border border-muted bg-white dark:bg-black text-black dark:text-white placeholder:text-gray-400 
-                                 focus:outline-none focus:ring-2 focus:ring-primary"
-                              placeholder="Doe"
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div>
-                          <label
-                            htmlFor="email"
-                            className="block text-sm font-medium mb-2"
-                          >
-                            Email Address
-                          </label>
-                          <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            className="w-full p-3 rounded-xl border border-muted bg-white dark:bg-black text-black dark:text-white placeholder:text-gray-400 
-                               focus:outline-none focus:ring-2 focus:ring-primary"
-                            placeholder="john.doe@university.edu"
-                            required
-                          />
-                        </div>
-
-                        <div>
-                          <label
-                            htmlFor="institution"
-                            className="block text-sm font-medium mb-2"
-                          >
-                            Institution Name
-                          </label>
-                          <input
-                            type="text"
-                            id="institution"
-                            name="institution"
-                            className="w-full p-3 rounded-xl border border-muted bg-white dark:bg-black text-black dark:text-white placeholder:text-gray-400 
-                               focus:outline-none focus:ring-2 focus:ring-primary"
-                            placeholder="University of Technology"
-                          />
-                        </div>
-
-                        <div>
-                          <label
-                            htmlFor="role"
-                            className="block text-sm font-medium mb-2"
-                          >
-                            Your Role
-                          </label>
-                          <select
-                            id="role"
-                            name="role"
-                            className="w-full p-3 rounded-xl border border-muted bg-white dark:bg-black text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                          >
-                            <option value="">Select your role</option>
-                            <option value="administrator">Administrator</option>
-                            <option value="faculty">Faculty Member</option>
-                            <option value="sustainability">
-                              Sustainability Officer
-                            </option>
-                            <option value="facilities">
-                              Facilities Management
-                            </option>
-                            <option value="student">
-                              Student Representative
-                            </option>
-                            <option value="other">Other</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label
-                            htmlFor="message"
-                            className="block text-sm font-medium mb-2"
-                          >
-                            Message
-                          </label>
-                          <textarea
-                            id="message"
-                            name="message"
-                            rows={5}
-                            className="w-full p-3 rounded-xl border border-muted bg-white dark:bg-black text-black dark:text-white placeholder:text-gray-400 
-                               focus:outline-none focus:ring-2 focus:ring-primary"
-                            placeholder="Tell us about your institution's waste management needs..."
-                            required
-                          ></textarea>
-                        </div>
-
-                        <div className="flex items-start gap-2">
-                          <input
-                            type="checkbox"
-                            id="consent"
-                            name="consent"
-                            className="mt-1"
-                          />
-                          <label
-                            htmlFor="consent"
-                            className="text-sm text-muted-foreground"
-                          >
-                            I agree to receive communications from Waste Vision
-                            about my inquiry and related services.
-                          </label>
-                        </div>
-                      </div>
-
-                      <ShimmerButton type="submit" disabled={loading}>
-                        {loading ? "Submitting..." : "Submit Request"}
-                      </ShimmerButton>
-                    </form>
-                  </div>
-                </div>
+      {/* Request a Consultation */}
+      <section className="relative py-20 px-6">
+        <div className="container mx-auto max-w-7xl">
+          <div className="grid md:grid-cols-2 gap-12 relative">
+            {/* Left Side: Consultation Form */}
+            <div className="relative bg-card border border-border rounded-2xl shadow-lg p-10 flex flex-col justify-between">
+              <div>
+                <h2 className="text-3xl font-extrabold text-center mb-4">
+                  Request a Consultation
+                </h2>
+                <p className="text-muted-foreground mb-10 text-center leading-relaxed">
+                  Fill out the form below, and one of our specialists will reach
+                  out to discuss how Waste Vision can help your institution.
+                </p>
               </div>
 
-              {/* Right Card: Why Choose Us */}
-              <div className="group relative h-full flex">
-                <div className="p-[1px] rounded-3xl bg-gradient-to-r from-green-400/60 via-green-300/40 to-green-500/60 flex flex-col w-full">
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <input
+                    type="text"
+                    name="firstName"
+                    placeholder="First Name"
+                    required
+                    className="w-full p-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-foreground"
+                  />
+                  <input
+                    type="text"
+                    name="lastName"
+                    placeholder="Last Name"
+                    required
+                    className="w-full p-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-foreground"
+                  />
+                </div>
+                <input
+                  type="text"
+                  name="institution"
+                  placeholder="Institution / Organization"
+                  required
+                  className="w-full p-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-foreground"
+                />
+                <select
+                  name="role"
+                  required
+                  className="w-full p-3 rounded-lg border border-border bg-background text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground"
+                >
+                  <option value="">Select Your Role</option>
+                  <option value="Administrator">Administrator</option>
+                  <option value="Facilities Manager">Facilities Manager</option>
+                  <option value="Faculty">Faculty</option>
+                  <option value="Student">Student</option>
+                  <option value="Other">Other</option>
+                </select>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Your Email"
+                    required
+                    className="w-full p-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-foreground"
+                  />
+                  <input
+                    type="tel"
+                    name="phone"
+                    placeholder="Phone Number"
+                    className="w-full p-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-foreground"
+                  />
+                </div>
+                <textarea
+                  name="message"
+                  rows={4}
+                  placeholder="Your Message"
+                  required
+                  className="w-full p-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-foreground"
+                ></textarea>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3 rounded-lg bg-foreground text-background font-semibold hover:opacity-80 transition"
+                >
+                  {loading ? "Sending..." : "Submit Request"}
+                </button>
+              </form>
+
+              {status && (
+                <p className="mt-6 text-center text-sm font-medium text-red-500">
+                  {status}
+                </p>
+              )}
+            </div>
+
+            {/* Floating Mascot (outside the card) */}
+            <motion.img
+              src="/images/nn-removebg-preview.png"
+              alt="Mascot"
+              className="absolute -top-48 -left-38 w-32 md:w-80 drop-shadow-lg pointer-events-none select-none"
+              animate={{ y: [0, -12, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
+
+            {/* Right Side: Contact Info + Map */}
+            <div className="flex flex-col gap-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {[
+                  {
+                    icon: <Phone className="w-6 h-6" />,
+                    title: "Phone Number",
+                    value: "9432012681",
+                  },
+                  {
+                    icon: <Mail className="w-6 h-6" />,
+                    title: "Email Address",
+                    value: "waste_vision@gmail.com",
+                  },
+                  {
+                    icon: <MessageSquare className="w-6 h-6" />,
+                    title: "Address",
+                    value:
+                      "157/F, Nilgunj Rd, Sahid Colony, Panihati, Khardaha, West Bengal 700114",
+                  },
+                  {
+                    icon: <MapPin className="w-6 h-6" />,
+                    title: "Campus",
+                    value: "Urban",
+                  },
+                ].map((item, idx) => (
                   <div
-                    className="h-full flex flex-col relative bg-white dark:bg-black backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-white/20 
-            transition-transform duration-300 group-hover:scale-[1.02] group-hover:shadow-green-400/30 overflow-hidden"
+                    key={idx}
+                    className="flex flex-col items-start gap-3 p-6 rounded-xl border border-border bg-card shadow-md hover:shadow-lg transition"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-white/10 animate-pulse rounded-3xl"></div>
-
-                    <h3
-                      className="text-2xl md:text-3xl font-extrabold mb-6 text-center
-              bg-clip-text text-transparent
-              bg-gradient-to-r from-green-500 to-green-300
-              dark:from-green-400 dark:to-green-200
-              drop-shadow-md"
-                    >
-                      Why Choose Waste Vision?
-                    </h3>
-
-                    <div className="space-y-6 relative z-10 flex-1">
-                      {[
-                        {
-                          icon: <Cpu className="w-6 h-6" />,
-                          title: "Cutting-edge Technology",
-                          text: "YOLOv8 detection model and 3D reconstruction for smarter AI waste management.",
-                        },
-                        {
-                          icon: <Users className="w-6 h-6" />,
-                          title: "Educational Focus",
-                          text: "Built for colleges & universities with campus-specific features.",
-                        },
-                        {
-                          icon: <Workflow className="w-6 h-6" />,
-                          title: "Proven Results",
-                          text: "Institutions reduced waste costs by up to 30% with our system.",
-                        },
-                        {
-                          icon: <HelpCircle className="w-6 h-6" />,
-                          title: "Dedicated Support",
-                          text: "Comprehensive onboarding & 24/7 support.",
-                        },
-                      ].map((item, i) => (
-                        <div
-                          key={i}
-                          className="flex items-start gap-4 p-4 rounded-xl transition-all duration-300 hover:bg-black/5 hover:scale-[1.02]"
-                        >
-                          <div className="bg-black/10 p-3 rounded-full text-black dark:text-white border-2 border-green-500 dark:border-green-400 shadow-md shadow-green-400/30">
-                            {item.icon}
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-lg">
-                              {item.title}
-                            </h4>
-                            <p className="text-muted-foreground">{item.text}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-6 mt-10 relative z-10">
-                      <div className="text-center">
-                        <h4 className="text-3xl font-bold text-black dark:text-white">
-                          30%
-                        </h4>
-                        <p className="text-muted-foreground text-sm">
-                          Waste Cost Savings
-                        </p>
-                      </div>
-                      <div className="text-center">
-                        <h4 className="text-3xl font-bold text-black dark:text-white">
-                          24/7
-                        </h4>
-                        <p className="text-muted-foreground text-sm">
-                          Support Availability
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-10 p-8 rounded-2xl bg-white/10 dark:bg-black/30 backdrop-blur-2xl border border-white/20 shadow-xl hover:scale-[1.02] transition-all relative z-10">
-                      <h4 className="font-semibold text-xl mb-3">
-                        🚀 Schedule a Demo
-                      </h4>
-                      <p className="text-muted-foreground mb-4">
-                        Want to see Waste Vision in action? Book a live demo and
-                        explore how it transforms waste management.
+                    {item.icon}
+                    <div>
+                      <p className="font-semibold">{item.title}</p>
+                      <p className="text-muted-foreground text-sm">
+                        {item.value}
                       </p>
-                      <ShimmerButton>Request Demo</ShimmerButton>
                     </div>
                   </div>
-                </div>
+                ))}
+              </div>
+              <div className="rounded-2xl overflow-hidden shadow-md border border-border">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3683.086268781775!2d88.3790179745803!3d22.61029793279586!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a02764c40a1cbe7%3A0x6e3fc1531d1cb33!2sGuru%20Nanak%20Institute%20of%20Technology!5e0!3m2!1sen!2sin!4v1752687634134!5m2!1sen!2sin"
+                  width="100%"
+                  height="280"
+                  loading="lazy"
+                  className="border-0 w-full h-96"
+                ></iframe>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* FAQ Section */}
-        <section className="py-16 bg-muted/30 -mt-8">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-extrabold mb-12 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Frequently Asked Questions
-            </h2>
-
-            <Accordion
-              type="single"
-              collapsible
-              className="w-full max-w-3xl mx-auto space-y-4"
-            >
-              <AccordionItem
-                value="item-1"
-                className="rounded-xl border bg-background p-3 hover:shadow-lg hover:shadow-primary/20 transition-all"
+      {/* Why Choose Waste Vision */}
+      <section className="py-20 bg-background relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-foreground/5 to-transparent pointer-events-none"></div>
+        <div className="container mx-auto px-6 text-center relative z-10">
+          <h2 className="text-3xl md:text-4xl font-extrabold mb-16 text-foreground">
+            Why Choose Waste Vision?
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                icon: (
+                  <CpuIcon className="w-10 h-10 text-foreground mx-auto mb-4" />
+                ),
+                title: "Cutting-edge Technology",
+                desc: "Harness AI-powered solutions designed to revolutionize waste management.",
+              },
+              {
+                icon: (
+                  <BookOpen className="w-10 h-10 text-foreground mx-auto mb-4" />
+                ),
+                title: "Educational Focus",
+                desc: "Empowering schools and institutions with awareness and sustainable practices.",
+              },
+              {
+                icon: (
+                  <CheckCircle2 className="w-10 h-10 text-foreground mx-auto mb-4" />
+                ),
+                title: "Proven Results",
+                desc: "Trusted by institutions to reduce waste and promote efficiency.",
+              },
+              {
+                icon: (
+                  <Headphones className="w-10 h-10 text-foreground mx-auto mb-4" />
+                ),
+                title: "Dedicated Support",
+                desc: "Our team is always ready to assist you with guidance and support.",
+              },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="bg-card h-full p-6 rounded-xl shadow-lg border border-border hover:border-foreground/40 hover:shadow-md transition-all duration-300"
               >
-                <AccordionTrigger className="text-lg font-semibold flex items-center gap-2 no-underline hover:no-underline focus:no-underline">
-                  <HelpCircle className="w-5 h-5 text-primary" />
-                  How long does implementation take?
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground pl-7 text-base">
-                  Typical implementation takes 2-4 weeks, depending on the size
-                  of your campus and specific requirements.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem
-                value="item-2"
-                className="rounded-xl border bg-background p-3 hover:shadow-lg hover:shadow-secondary/20 transition-all"
-              >
-                <AccordionTrigger className="text-lg font-semibold flex items-center gap-2 no-underline hover:no-underline focus:no-underline">
-                  <Cpu className="w-5 h-5 text-secondary" />
-                  What hardware requirements are needed?
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground pl-7 text-base">
-                  Our system works with standard cameras and computing
-                  equipment. We'll provide detailed specifications during
-                  consultation.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem
-                value="item-3"
-                className="rounded-xl border bg-background p-3 hover:shadow-lg hover:shadow-green-400/20 transition-all"
-              >
-                <AccordionTrigger className="text-lg font-semibold flex items-center gap-2 no-underline hover:no-underline focus:no-underline">
-                  <Users className="w-5 h-5 text-green-500" />
-                  Is training provided for staff?
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground pl-7 text-base">
-                  Yes, we provide comprehensive training for facilities staff
-                  and administrators as part of our implementation package.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem
-                value="item-4"
-                className="rounded-xl border bg-background p-3 hover:shadow-lg hover:shadow-blue-400/20 transition-all"
-              >
-                <AccordionTrigger className="text-lg font-semibold flex items-center gap-2 no-underline hover:no-underline focus:no-underline">
-                  <Workflow className="w-5 h-5 text-blue-500" />
-                  Can the system integrate with our existing waste management
-                  processes?
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground pl-7 text-base">
-                  Absolutely. Our solution is designed to complement and enhance
-                  your existing waste management infrastructure and processes.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
-        </section>
-      </main>
-
-      {/* Modal for Success/Error */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-xl max-w-sm w-full text-center relative animate-fadeIn">
-            <button
-              onClick={() => setShowModal(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-            >
-              ✕
-            </button>
-
-            <h3 className="text-xl font-bold mb-2 text-green-600 dark:text-green-400">
-              {status?.startsWith("✅") ? "Success!" : "Notice"}
-            </h3>
-            <p className="text-gray-700 dark:text-gray-300">{status}</p>
+                {item.icon}
+                <h3 className="text-xl font-bold mb-2">{item.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
-      )}
+      </section>
+
+      {/* FAQ */}
+      <section className="relative py-16 bg-muted/30 -mt-8 overflow-hidden">
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="relative mb-16 text-center">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-foreground">
+              Frequently Asked Questions
+            </h2>
+            <motion.img
+              src="/images/q-removebg-preview.png"
+              alt="FAQ Mascot"
+              className="absolute -top-8 right-24 w-32 md:w-78 drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)]"
+              animate={{
+                y: [0, -14, 0],
+                rotate: [0, -5, 5, 0],
+                scale: [1, 1.1, 1],
+              }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </div>
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full max-w-3xl mx-auto space-y-4"
+          >
+            <AccordionItem
+              value="item-1"
+              className="rounded-xl border bg-background p-4 hover:shadow-md transition-all"
+            >
+              <AccordionTrigger className="text-lg font-semibold flex items-center gap-3 no-underline hover:no-underline decoration-transparent">
+                <HelpCircle className="w-7 h-7 text-foreground" />
+                How does Waste Vision work?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pl-10 text-base">
+                Waste Vision uses AI-powered image recognition and analytics to
+                identify, measure, and track waste, providing insights that help
+                institutions reduce waste and improve sustainability.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem
+              value="item-2"
+              className="rounded-xl border bg-background p-4 hover:shadow-md transition-all"
+            >
+              <AccordionTrigger className="text-lg font-semibold flex items-center gap-3 no-underline hover:no-underline decoration-transparent">
+                <Cpu className="w-7 h-7 text-foreground" />
+                Do we need special equipment to use it?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pl-14 text-base">
+                No special hardware is required. Waste Vision is compatible with
+                standard cameras and computing devices, making it easy to set up
+                and integrate.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem
+              value="item-3"
+              className="rounded-xl border bg-background p-4 hover:shadow-md transition-all"
+            >
+              <AccordionTrigger className="text-lg font-semibold flex items-center gap-3 no-underline hover:no-underline decoration-transparent">
+                <Users className="w-7 h-7 text-foreground" />
+                Who can benefit from Waste Vision?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pl-12 text-base">
+                Waste Vision is designed for schools, universities, and
+                institutions that want to manage waste more effectively, reduce
+                costs, and promote sustainability on campus.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem
+              value="item-4"
+              className="rounded-xl border bg-background p-4 hover:shadow-md transition-all"
+            >
+              <AccordionTrigger className="text-lg font-semibold flex items-center gap-3 no-underline hover:no-underline decoration-transparent">
+                <Workflow className="w-7 h-7 text-foreground" />
+                Is support available after setup?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pl-16 text-base">
+                Yes! Our team provides ongoing technical support, updates, and
+                training to ensure your institution gets the most out of Waste
+                Vision.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      </section>
 
       <Footer />
     </div>
