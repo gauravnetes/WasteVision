@@ -1,8 +1,11 @@
-fastapi
+
+# backend/requirements.txt
+fastapi[all]
 uvicorn[standard]
-pydantic
-python-multipart
-pillow
-ultralytics
-torch
-opencv-python
+sqlalchemy
+psycopg2-binary
+pydantic[email]
+passlib[bcrypt]
+python-jose[cryptography]
+python-dotenv
+pydantic-settings
