@@ -1,103 +1,233 @@
+"use client";
+import CircularText from "@/components/CircularText";
+import FadeContent from "@/components/FadeContent";
+import GradualBlurMemo from "@/components/GradualBlur";
+import MaksedDivCard from "@/components/MaskedDiv";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import Image from "next/image";
+import TiltedCard from "@/components/TiltedCard";
+import { TextScroll } from "@/components/ui/text-scroll";
+import { CardCarousel } from "@/components/ui/card-carousel";
+import FlowingMenu from "@/components/FlowingMenu";
+import localFont from "next/font/local";
+import { useRef } from "react";
+// Import the custom font directly in this component
+const customFont = localFont({
+  src: [
+    {
+      path: "../fonts/Syncopate-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../fonts/Syncopate-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-custom-local",
+  display: "swap",
+});
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const playSound = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0; // restart if already playing
+      audioRef.current.play();
+    }
+  };
+  const images = [
+    { src: "/cards/1.png", alt: "Image 1" },
+    { src: "/cards/2.webp", alt: "Image 2" },
+    { src: "/cards/3.webp", alt: "Image 3" },
+    { src: "/cards/1.webp", alt: "Image 1" },
+    { src: "/cards/2.webp", alt: "Image 2" },
+    { src: "/cards/3.webp", alt: "Image 3" },
+  ];
+  const demoItems = [
+    {
+      link: "#",
+      text: "Mojave",
+      image: "https://picsum.photos/600/400?random=1",
+    },
+    {
+      link: "#",
+      text: "Sonoma",
+      image: "https://picsum.photos/600/400?random=2",
+    },
+    {
+      link: "#",
+      text: "Monterey",
+      image: "https://picsum.photos/600/400?random=3",
+    },
+    {
+      link: "#",
+      text: "Sequoia",
+      image: "https://picsum.photos/600/400?random=4",
+    },
+  ];
+  return (
+    <>
+      <section className="relative flex flex-col min-h-screen w-full">
+        {/* Navbar */}
+        <Navbar />
+        {/* Hero Section */}
+        <FadeContent blur duration={1000} easing="ease-out" initialOpacity={0}>
+          <div className="relative h-screen w-full ">
+            {/* Background Mask */}
+            <div className="absolute inset-0 bg-black/10 dark:bg-black/20 z-[5] transition-colors duration-300" />
+            <MaksedDivCard />
+            {/* Hero Content */}
+            <div className="absolute font-custom inset-0 flex flex-col items-center justify-center text-center z-10 px-6">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+                Detect. Measure. Manage Waste Smarter.
+              </h1>
+              <p className="text-lg font-custom font-bold md:text-xl mb-10 max-w-6xl text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                BHai behen ka dola mela tadham tadham bola
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <a
+                  href="/dashboard"
+                  className="bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-8 rounded-lg transition-all"
+                >
+                  Our Dashboard
+                </a>
+                <a
+                  href="/signup"
+                  className="bg-secondary hover:bg-secondary/90 text-black font-semibold py-3 px-8 rounded-lg transition-all"
+                >
+                  Get Started
+                </a>
+              </div>
+            </div>
+            {/* //megaphone */}
+            <div
+              className="absolute left-12 bottom-0 z-20 animate-float cursor-pointer group"
+              onClick={playSound}
+            >
+              {/* Mic image */}
+              <Image
+                className="rotate-x-12"
+                src="/images/model.png"
+                alt="Mic"
+                width={400}
+                height={400}
+                priority
+              />
+
+              {/* Tooltip */}
+              <span
+                className="
+          absolute -top-8 left-1/2 -translate-x-1/2
+          opacity-0 group-hover:opacity-100
+          bg-black/40 text-white text-sm px-2 py-1 rounded-md
+          transition-opacity duration-300 whitespace-nowrap
+        "
+              >
+                Touch me 😏
+              </span>
+
+              {/* Horn Sound */}
+              <audio ref={audioRef} src="/sounds/horn.mp3" />
+            </div>
+            {/* Circular Text */}
+            <div className="absolute left-[32vw] bottom-2 z-20">
+              <CircularText
+                text="YOUR*WASTE*VISION*"
+                onHover="goBonkers"
+                spinDuration={20}
+                className="text-gray-900 font-custom dark:text-gray-100 transition-colors duration-300"
+              />
+            </div>
+            <div className="mt-15 ">
+              <TextScroll
+                className="font-display font-custom text-center text-4xl font-semibold tracking-tighter  text-black dark:text-white md:text-7xl md:leading-[5rem]"
+                text="WASTE VISION  "
+                default_velocity={5}
+              />
+            </div>
+          </div>
+
+          {/* Features Section */}
+          <div className="relative font-custom mt-40 w-full min-h-screen flex items-center">
+            <div className="max-w-7xl mx-auto flex gap-16 items-center px-6 ">
+              {/* Left Side */}
+
+              <div className="space-y-6  ">
+                <h2 className="text-3xl  md:text-4xl font-extrabold text-gray-900 dark:text-gray-100">
+                  Smarter Waste Detection, Cleaner Future
+                </h2>
+
+                <p className="text-lg  text-gray-700 dark:text-gray-300 leading-relaxed">
+                  Our AI-powered waste detection system goes beyond simple
+                  object recognition. By combining{" "}
+                  <span className="font-semibold">2D detection</span> with{" "}
+                  <span className="font-semibold">3D waste approximation</span>,
+                  we deliver insights that help institutions and communities
+                  make smarter, data-driven decisions for a cleaner tomorrow.
+                </p>
+                <ul className="space-y-3 text-gray-800 dark:text-gray-200">
+                  <li>✔️ Real-time waste detection from drone footage</li>
+                  <li>✔️ Automatic classification: Small, Medium, Large</li>
+                  <li>✔️ 3D estimation of waste area & volume</li>
+                  <li>
+                    ✔️ Actionable analytics for campus & community cleaning
+                  </li>
+                </ul>
+              </div>
+              {/* Right Side */}
+              <div className="flex justify-center">
+                <TiltedCard
+                  imageSrc="/images/card.jpg"
+                  altText="amader valaobashar waste detection system"
+                  captionText="Hey Gour Da Look At Me"
+                  containerHeight="400px"
+                  containerWidth="400px"
+                  imageHeight="400px"
+                  imageWidth="400px"
+                  rotateAmplitude={12}
+                  scaleOnHover={1}
+                  showMobileWarning={false}
+                  showTooltip={true}
+                  displayOverlayContent={true}
+                  overlayContent={
+                    <p className="tilted-card-demo-text">
+                      Hey Gour Da Look At Me
+                    </p>
+                  }
+                />
+              </div>
+            </div>
+          </div>
+          <div className="relative font-custom mb-10">
+            <CardCarousel
+              images={images}
+              autoplayDelay={2000}
+              showPagination={true}
+              showNavigation={true}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          </div>
+          <div className="relative font-custom py-13 h-[70vh] z-12">
+            <FlowingMenu items={demoItems} />
+          </div>
+        </FadeContent>
+
+        {/* Bottom Blur + Footer */}
+        <GradualBlurMemo
+          target="page"
+          position="bottom"
+          height="6rem"
+          strength={2}
+          divCount={5}
+          curve="bezier"
+          exponential
+          opacity={1}
+        />
+        <Footer />
+      </section>
+    </>
   );
 }
