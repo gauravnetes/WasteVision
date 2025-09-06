@@ -86,7 +86,7 @@ export default function Home() {
                 Detect. Measure. Manage Waste Smarter.
               </h1>
               <p className="text-lg font-custom font-bold md:text-xl mb-10 max-w-6xl text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                BHai behen ka dola mela tadham tadham bola
+                Lorem ipsum dolor sit amet consectetur.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <a
