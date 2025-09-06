@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import TiltedCard from "@/components/TiltedCard";
 import { VideoText } from "@/components/ui/VideoText";
 import { MagicCard } from "@/components/ui/MagicCard";
+import { SparklesText } from "@/components/ui/SparklesText";
 
 export default function About() {
   const cardVariants = {
@@ -107,67 +108,65 @@ export default function About() {
       </section>
 
       {/* Our Mission */}
-<section className="py-16 px-4 sm:px-6 lg:px-8">
-  <div className="max-w-7xl mx-auto">
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5 }}
-        viewport={{ once: true }}
-        className="flex flex-col items-start"
-      >
-        <div className="relative h-[100px] w-full overflow-hidden text-left">
-          <VideoText src="https://cdn.magicui.design/ocean-small.webm" className="text-left">
-            VISION
-          </VideoText>
-        </div>
-        <p className="text-lg text-muted-foreground mt-4 mb-6">
-          At Waste Vision, we believe that technology can transform how we
-          manage waste globally. Our mission is to develop AI-powered
-          solutions that make waste sorting, recycling, and management
-          more efficient and effective.
-        </p>
-        <p className="text-lg text-muted-foreground">
-          By combining computer vision, machine learning, and 3D
-          reconstruction, we're creating tools that help waste management
-          facilities, municipalities, and businesses reduce landfill
-          usage, increase recycling rates, and move toward a more
-          sustainable future.
-        </p>
-      </motion.div>
-
-      <motion.div
-        className="rounded-xl overflow-hidden shadow-lg"
-        initial={{ opacity: 0, x: 20 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5 }}
-        viewport={{ once: true }}
-      >
-        <TiltedCard
-          imageSrc="/images/about-pic.jpg"
-          altText="Waste Vision Demo"
-          captionText="AI-Powered Waste Management"
-          containerHeight="400px"
-          containerWidth="100%"
-          imageHeight="400px"
-          imageWidth="100%"
-          rotateAmplitude={12}
-          scaleOnHover={1}
-          showMobileWarning={false}
-          showTooltip={true}
-          displayOverlayContent={true}
-          overlayContent={
-            <p className="text-white text-center text-lg font-bold">
-              AI-Powered Waste Management
-            </p>
-          }
-        />
-      </motion.div>
-    </div>
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+           <motion.div
+  initial={{ opacity: 0, x: -20 }}
+  whileInView={{ opacity: 1, x: 0 }}
+  transition={{ duration: 0.5 }}
+  viewport={{ once: true }}
+  className="flex flex-col items-start"
+>
+  <div className="relative h-[80px] w-full overflow-hidden text-left mt-3">
+    <SparklesText>Vision</SparklesText>
   </div>
-</section>
+  <p className="text-lg text-muted-foreground mb-2">
+    At Waste Vision, we believe that technology can transform how we
+    manage waste globally. Our mission is to develop AI-powered
+    solutions that make waste sorting, recycling, and management
+    more efficient and effective.
+  </p>
+  <p className="text-lg text-muted-foreground">
+    By combining computer vision, machine learning, and 3D
+    reconstruction, we're creating tools that help waste management
+    facilities, municipalities, and businesses reduce landfill
+    usage, increase recycling rates, and move toward a more
+    sustainable future.
+  </p>
+</motion.div>
 
+
+            <motion.div
+              className="rounded-xl overflow-hidden shadow-lg"
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+            >
+              <TiltedCard
+                imageSrc="/images/about-pic.jpg"
+                altText="Waste Vision Demo"
+                captionText="AI-Powered Waste Management"
+                containerHeight="400px"
+                containerWidth="100%"
+                imageHeight="400px"
+                imageWidth="100%"
+                rotateAmplitude={12}
+                scaleOnHover={1}
+                showMobileWarning={false}
+                showTooltip={true}
+                displayOverlayContent={true}
+                overlayContent={
+                  <p className="text-white text-center text-lg font-bold">
+                    AI-Powered Waste Management
+                  </p>
+                }
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
       {/* Our Team */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-transparent backdrop-blur-md">
@@ -226,84 +225,15 @@ export default function About() {
         <motion.img
           src="/images/about-comp-preview.png"
           alt="floating"
-          className="absolute top-0 left-0 w-56 h-56 opacity-50 drop-shadow-[0_20px_40px_rgba(139,92,246,0.5)] saturate-150"
+          className="absolute top-0 left-0 w-80 h-80 opacity-100 drop-shadow-[0_25px_50px_rgba(139,92,246,0.6)] saturate-150 brightness-110 z-50"
           animate={{
-            x: [0, 50, 0, -50, 0],
-            y: [0, -30, 0, 30, 0],
-            rotate: [0, 18, 0, -18, 0],
-            scale: [1, 1.1, 1, 0.95, 1],
+            x: [0, 60, 0, -60, 0],
+            y: [0, -40, 0, 40, 0],
+            rotate: [0, 20, 0, -20, 0],
+            scale: [1, 1.15, 1, 0.95, 1],
           }}
           transition={{
             duration: 18,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-
-        <motion.img
-          src="/images/about-comp-1-preview.png"
-          alt="floating"
-          className="absolute bottom-0 right-0 w-64 h-64 opacity-60 drop-shadow-[0_25px_50px_rgba(236,72,153,0.6)] contrast-125"
-          animate={{
-            x: [0, -40, 0, 40, 0],
-            y: [0, 25, 0, -25, 0],
-            rotate: [0, -20, 0, 20, 0],
-            scale: [1, 1.15, 1, 0.9, 1],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-
-        <motion.img
-          src="/images/about-comp-2-preview.png"
-          alt="floating"
-          className="absolute top-1/3 left-1/5 w-48 h-48 opacity-55 drop-shadow-[0_15px_35px_rgba(34,197,94,0.5)] brightness-110"
-          animate={{
-            x: [0, 35, 0, -35, 0],
-            y: [0, -35, 0, 35, 0],
-            rotate: [0, 15, 0, -15, 0],
-            scale: [1, 1.12, 1, 0.92, 1],
-          }}
-          transition={{
-            duration: 22,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-
-        {/* New floating images */}
-        <motion.img
-          src="/images/about-comp-3-preview.png"
-          alt="floating"
-          className="absolute top-1/4 right-1/3 w-40 h-40 opacity-50 drop-shadow-[0_20px_40px_rgba(59,130,246,0.5)] saturate-125"
-          animate={{
-            x: [0, 30, 0, -30, 0],
-            y: [0, -20, 0, 20, 0],
-            rotate: [0, 12, 0, -12, 0],
-            scale: [1, 1.1, 1, 0.95, 1],
-          }}
-          transition={{
-            duration: 17,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-
-        <motion.img
-          src="/images/about-comp-4-preview.png"
-          alt="floating"
-          className="absolute bottom-1/4 left-1/3 w-36 h-36 opacity-55 drop-shadow-[0_15px_35px_rgba(245,158,11,0.5)] contrast-110"
-          animate={{
-            x: [0, -25, 0, 25, 0],
-            y: [0, 15, 0, -15, 0],
-            rotate: [0, -10, 0, 10, 0],
-            scale: [1, 1.08, 1, 0.93, 1],
-          }}
-          transition={{
-            duration: 19,
             repeat: Infinity,
             ease: "easeInOut",
           }}
