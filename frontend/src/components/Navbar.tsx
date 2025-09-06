@@ -153,47 +153,48 @@ export default function Navbar() {
           <ThemeToggleButton />
         </div>
 
-        {/* Transparent container with balanced blobs */}
-        <div className="relative flex justify-center items-center w-60 h-20 mt-4">
-          {/* Top-left blob (half hidden) */}
-          <div className="absolute top-2 left-2 w-7 h-7 bg-pink-500 rounded-full"></div>
+      {/* Transparent container with balanced blobs */}
+<div className="relative flex justify-center items-center w-60 h-20 mt-4">
+  {/* Top-left blob (half hidden) */}
+  <div className="absolute top-2 left-2 w-7 h-7 bg-pink-500 rounded-full"></div>
 
-          {/* Top-right blob (half hidden) */}
-          <div className="absolute top-2 right-3 w-7 h-7 bg-purple-500 rounded-full"></div>
+  {/* Top-right blob (half hidden) */}
+  <div className="absolute top-2 right-3 w-7 h-7 bg-purple-500 rounded-full"></div>
 
-          {/* Bottom blob (half hidden, centered) */}
-          <div className="absolute -bottom-2 right-12 -translate-x-1/2 w-9 h-9 bg-blue-500 rounded-full"></div>
+  {/* Bottom blob (half hidden, centered) */}
+  <div className="absolute -bottom-2 right-12 -translate-x-1/2 w-9 h-9 bg-blue-500 rounded-full"></div>
 
-          {/* Transparent glass container */}
-          <div
-            className="relative bg-white/20 dark:bg-black/30 backdrop-blur-xl 
+  {/* Transparent glass container */}
+  <div className="relative bg-white/20 dark:bg-black/30 backdrop-blur-xl 
                   border border-white/30 dark:border-gray-700 
-                  rounded-2xl px-6 py-2 shadow-lg"
-          >
-            <Link href="/">
-              <Image
-                className="cursor-pointer block dark:hidden"
-                src="/images/logo_light.png"
-                alt="Site Logo"
-                width={150}
-                height={150}
-                priority
-              />
-              <Image
-                className="cursor-pointer hidden dark:block"
-                src="/images/logo_dark.png"
-                alt="Site Logo"
-                width={150}
-                height={150}
-                priority
-              />
-            </Link>
-          </div>
-        </div>
+                  rounded-2xl px-6 py-2 shadow-lg">
+    <Link href="/">
+      <Image
+        className="cursor-pointer block dark:hidden"
+        src="/images/logo_light.png"
+        alt="Site Logo"
+        width={150}
+        height={150}
+        priority
+      />
+      <Image
+        className="cursor-pointer hidden dark:block"
+        src="/images/logo_dark.png"
+        alt="Site Logo"
+        width={150}
+        height={150}
+        priority
+      />
+    </Link>
+  </div>
+</div>
+
+
+
       </div>
 
       <div
-        className="flex items-center gap-6 px-7 py-5 rounded-full border  
+        className="flex items-center gap-6 px-11 py-6 rounded-full border  
                       bg-white/5 backdrop-blur-md shadow-lg font-bold "
       >
         {/* Nav Links */}
