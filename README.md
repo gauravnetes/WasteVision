@@ -8,11 +8,10 @@ Ultimately, WasteVision will power a **full-stack application** (FastAPI backend
 
 ## 🚀 Features
 - 🔍 **Waste Detection** – Train a YOLOv8 model on a custom waste dataset (Roboflow annotated).
-- ♻️ **Multi-class Classification** – Detects hazardous waste, kitchen waste, recyclable waste, and others.
+- ♻️ **Zone Classification** – Classify zones based on waste quantity such as RED,YELLOW,GREEN.
 - 🖼️ **Inference on Images** – Run detection on campus images and save results with bounding boxes.
 - 📊 **Metrics Tracking** – Training logs include precision, recall, mAP, and loss curves.
-- 🧮 **Future (3D Estimation)** – Use MiDaS to estimate waste area and volume from images.
-- 📡 **Future (Deployment)** – Deploy as a web app with FastAPI backend & Next.js frontend.
+- 📡 **Deployment** – Deploy as a web app with FastAPI backend & Next.js frontend.
 
 ---
 
@@ -20,25 +19,48 @@ Ultimately, WasteVision will power a **full-stack application** (FastAPI backend
 ```
 
 waste-vision/
-│── dataset/             # Training dataset (train/valid/test + data.yaml)
-│   ├── train/images
-│   ├── train/labels
-│   ├── valid/images
-│   ├── valid/labels
-│   ├── test/images
-│   ├── test/labels
-│   └── data.yaml
 │
-│── notebooks/
-│   └── WasteVision\_YOLOv8.ipynb   # Colab notebook for training & testing
+│── backend/                 # FastAPI backend
+│   ├── alembic/             # Database migrations
+│   ├── app/                 # Core application logic
+│   ├── ml/                  # ML-related scripts
+│   ├── venv/                # Virtual environment
+│   ├── .env.sample          # Environment variables template
+│   ├── alembic.ini          # Alembic config
+│   ├── celery_worker.py     # Celery worker for async tasks
+│   ├── docker-compose.yml   # Docker setup
+│   ├── requirements.txt     # Dependencies
+│   ├── requirements-ml.txt  # ML dependencies
+│   ├── settings.py          # App settings
+│   └── start_server.py      # App entrypoint
 │
-│── runs/                # YOLOv8 training results (auto-generated)
-│── results/             # Inference results (auto-generated)
-│── test\_images/         # Campus images for detection testing
+│── frontend/                # Next.js frontend
+│   ├── .next/               # Build output (auto-generated)
+│   ├── node_modules/        # Dependencies
+│   ├── public/              # Static assets
+│   ├── src/
+│   │   ├── app/             # App routes (pages)
+│   │   │   ├── about/
+│   │   │   ├── contact/
+│   │   │   ├── dashboard/
+│   │   │   ├── signin/
+│   │   │   ├── signup/
+│   │   │   ├── verify-email/
+│   │   │   └── business-model/
+│   │   ├── components/      # Reusable UI components
+│   │   ├── hooks/           # Custom React hooks
+│   │   ├── lib/             # Utility libraries
+│   │   ├── types/           # TypeScript types
+│   │   ├── utils/           # Helper functions
+│   │   └── globals.css      # Global styles
+│   ├── next.config.ts       # Next.js config
+│   ├── tailwind.config.js   # Tailwind CSS config
+│   ├── tsconfig.json        # TypeScript config
+│   ├── package.json         # NPM dependencies
+│   └── README.md            # Frontend documentation
 │
-│── backend/             # (Future) FastAPI backend
-│── frontend/            # (Future) Next.js frontend
-│── README.md            # Documentation
+│── LICENSE
+│── README.md                # Project documentation
 
 ````
 
@@ -47,11 +69,9 @@ waste-vision/
 ## 📊 Dataset
 The dataset is collected and annotated via **Roboflow**.
 
-- **Classes (nc=4):**
-  - `hazardous waste`
-  - `kitchen waste`
-  - `other waste`
-  - `recyclable waste`
+- **Classes (nc=1):**
+  - `garbage`
+  
 
 - Example `data.yaml`:
 ```yaml
@@ -63,8 +83,8 @@ train: train/images
 val: valid/images
 test: test/images
 
-nc: 4
-names: ['hazardous waste', 'kitchen waste', 'other waste', 'recyclable waste']
+nc: 1
+names: ['garbage']
 
 ````
 
@@ -75,8 +95,8 @@ names: ['hazardous waste', 'kitchen waste', 'other waste', 'recyclable waste']
 Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/waste-vision.git
-cd waste-vision
+git clone https://github.com/gauravnetes/WasteVision.git
+cd WasteVision
 ```
 
 Install dependencies:
@@ -188,9 +208,8 @@ model.train(resume=True)
 * [x] Dataset preparation (Roboflow)
 * [x] Train YOLOv8 on waste dataset
 * [x] Run inference on campus images
-* [x] Save results in Drive
+* [x] Save results based on zone classification
 * [ ] Add segmentation support
-* [ ] Integrate MiDaS for depth & volume estimation
 * [ ] Build FastAPI backend
 * [ ] Build Next.js frontend dashboard
 * [ ] Deploy as full-stack application
@@ -207,9 +226,13 @@ model.train(resume=True)
 ---
 
 ## 👥 Contributors
+Gourav Chandra – AIML Lead & Backend Developer
 
-* **Your Name** – Lead Developer
-* Team Members – Dataset collection, testing, documentation
+Souvik Rahut – AIML Lead & Frontend Developer
+
+Shriparna Prasad – Design Lead
+
+Diptish Sarkar - Testing Lead
 
 ---
 
