@@ -1,0 +1,7 @@
+
+services:
+  redis:
+    image: "redis:alpine" # Use the official, lightweight Redis image
+    container_name: waste_vision_redis
+    ports:
+      - "6379:6379" # Map port 6379 on your computer to port 6379 in the container
