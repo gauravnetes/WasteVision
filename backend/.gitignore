@@ -1,4 +1,4 @@
-
+# --- Secrets ---
 # Never commit your environment variables file.
 .env
 *.env
@@ -17,14 +17,13 @@ __pycache__/
 *.pyo
 *.pyd
 
-
 # --- IDE / Editor Folders ---
 # Ignore settings folders from popular editors.
 .vscode/
 .idea/
 
-
-
+# --- Operating System Files ---
+# Ignore files created by macOS and Windows.
 .DS_Store
 Thumbs.db
 
@@ -34,4 +33,10 @@ Thumbs.db
 htmlcov/
 .coverage
 
-alembic/versions/
+# csv files
+colleges_with_coords.csv
+
+ml/models/
+ml/test_images/
+ml/detected_images/
+ml/data
