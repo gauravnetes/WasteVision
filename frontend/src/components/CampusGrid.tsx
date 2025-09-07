@@ -435,6 +435,12 @@ export default function CampusGrid({
   const resetZonesRef = useRef<() => void>(() => {});
   const isMounted = useRef<boolean>(true);
 
+  // ✅ ADD THIS MISSING HOOK
+  useEffect(() => {
+    // This creates a snapshot of the initial zones for change detection
+    setOriginalZones(JSON.parse(JSON.stringify(zones)));
+  }, [zones]);
+
   // --- Cleanup map instance properly ---
   useEffect(() => {
     isMounted.current = true;
@@ -582,6 +588,8 @@ export default function CampusGrid({
   // --- Save zones ---
   const saveZones = async () => {
     try {
+      console.log("Attempting to save zones for campusId:", campusId);
+
       const API_BASE =
         process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
       const token = localStorage.getItem("token");
@@ -720,19 +728,19 @@ export default function CampusGrid({
           {zones.map((zone) => {
             // Dynamic color based on zone status
             const getStatusColor = (status: string) => {
-              if (status === 'Red') return '#ef4444'; // Red
-              if (status === 'Yellow') return '#f59e0b'; // Amber/Yellow
-              return '#38bdf8'; // Default/Green/Blue
+              if (status === "Red") return "#ef4444"; // Red
+              if (status === "Yellow") return "#f59e0b"; // Amber/Yellow
+              return "#38bdf8"; // Default/Green/Blue
             };
-            
+
             const color = getStatusColor(zone.status);
-            
+
             return (
               <Polygon
                 key={zone.id}
                 positions={zone.coords}
                 pathOptions={{
-                  color: isEditing ? '#f97316' : isMoving ? '#6366f1' : color,
+                  color: isEditing ? "#f97316" : isMoving ? "#6366f1" : color,
                   weight: 2,
                   fillOpacity: 0.2, // Increased for better visibility
                 }}

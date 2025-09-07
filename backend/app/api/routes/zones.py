@@ -21,18 +21,28 @@ def get_campus_map_data(
 
 
 
-@router.put("/bulk", response_model=dict)
+@router.put("/bulk/{campus_id}", response_model=dict)
 def update_zones_bulk(
-    zones_data: List[zone_schema.ZoneUpdate], 
-    db: Session = Depends(utils.get_db), 
-    current_user: models.User = Depends(utils.get_current_user)
-): 
-    return crud_zone.bulk_update_zones(
-        db=db, 
-        zones_data=zones_data, 
-        campus_id=current_user.campus_id
-    )
 
+    campus_id: uuid.UUID, # Accept campus_id from the path
+    zones_data: List[zone_schema.ZoneUpdate],
+    db: Session = Depends(utils.get_db),
+    current_user: models.User = Depends(utils.get_current_user)
+):
+    # Optional but recommended: Check if the user is allowed to edit this campus
+    if current_user.campus_id != campus_id:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to modify zones for this campus."
+        )
+  # You can print the data for debugging here
+    print("zones_data received:", zones_data);
+    
+    return crud_zone.bulk_update_zones(
+        db=db,
+        zones_data=zones_data,
+        campus_id=campus_id # Use the campus_id from the path
+    )
 
 # ✅ Create a single new zone
 @router.post("/", response_model=zone_schema.MapZone, status_code=201)
