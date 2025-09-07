@@ -226,12 +226,13 @@ model.train(resume=True)
 ---
 
 ## 👥 Contributors
+Gourav Chandra – AIML Lead & Backend Developer
 
-Gourav Chandra – AIML Lead & Backend developer
-Souvik Rahut – AIML Lead & Frontend developer
-Shriparna Prasad - Design Lead
-Diptish Sarkar - Testing Head
+Souvik Rahut – AIML Lead & Frontend Developer
 
+Shriparna Prasad – Design Lead
+
+Diptish Sarkar – Testing Head
 ---
 
 ## 📜 License
