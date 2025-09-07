@@ -1,6 +1,6 @@
 import uuid 
 from pydantic import BaseModel
-from typing import Any
+from typing import Any, List
 
 class MapZone(BaseModel): 
     public_id: uuid.UUID
@@ -15,3 +15,9 @@ class MapZone(BaseModel):
 class ZoneUpdate(BaseModel): 
     public_id: uuid.UUID
     geo_boundary: dict
+    
+class ZoneCreate(BaseModel): 
+    id: str
+    name: str
+    coords: List[List[float]]
+    

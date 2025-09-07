@@ -16,7 +16,10 @@ class Settings(BaseSettings):
     SMTP_FROM_NAME: str = "Waste Vision"
     
     
-    
+    REDIS_URL: str
+    CLOUDINARY_CLOUD_NAME: str
+    CLOUDINARY_API_KEY: str
+    CLOUDINARY_API_SECRET: str
     
     
     class Config: 

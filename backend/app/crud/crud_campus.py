@@ -86,4 +86,11 @@ def update_campus_location(db: Session, campus_id: int, lat: float, lon: float) 
         db.refresh(db_campus)
         
     return db_campus
-        
+
+def update_campus_boundary_padding(db: Session, campus_id: int, boundary_padding: int) -> models.Campus: 
+    db_campus = db.query(models.Campus).filter(models.Campus.id == campus_id).first()
+    if db_campus: 
+        db_campus.boundary_padding_meters = boundary_padding
+        db.commit()
+        db.refresh(db_campus)
+    return db_campus        

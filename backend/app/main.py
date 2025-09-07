@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import auth, zones, locations, campuses
+from app.api.routes import auth, zones, locations, campuses, users, scans
 from app.core.database import Base, engine   # 👈 use new database.py
 from app.models import models  # 👈 ensure models are imported so tables get registered
 
@@ -29,9 +29,11 @@ app.add_middleware(
 
 # Register routers
 app.include_router(campuses.router, prefix="/api/campuses", tags=["Campuses"])
+app.include_router(users.router, prefix="/api/users", tags=["Users"])
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(zones.router, prefix="/api/zones", tags=["Map & Zones"])
 app.include_router(locations.router, prefix="/api", tags=['Locations'])
+app.include_router(scans.router, prefix="/api/scans", tags=['Locations'])
 
 @app.get("/")
 def read_root():

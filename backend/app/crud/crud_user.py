@@ -5,6 +5,9 @@ from datetime import datetime, timedelta
 from app.models import models
 from app.schemas import user as user_schema
 from app.core.security import get_password_hash
+from typing import Optional
+from typing import List
+
 
 def get_user_by_email(db: Session, email: str): 
     return db.query(models.User).options(
@@ -103,3 +106,28 @@ def reset_password(db: Session, email: str, reset_code: str, new_password: str):
     
     return True
     
+    
+def update_profile_image_url(db: Session, user_id: int, image_url: str) -> Optional[models.User]:
+    """Updates the profile image URL for a user."""
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if db_user:
+        db_user.profile_image_url = image_url
+        db.commit()
+        db.refresh(db_user)
+    return db_user
+
+def get_scan_results_for_campus(db: Session, campus_id: int, limit: int = 50) -> List[models.ScanResult]:
+    """
+    Gets the most recent scan results for a given campus.
+    """
+    return db.query(models.ScanResult).options(
+        joinedload(models.ScanResult.zone) # Eagerly load the related Zone object
+    ).join(
+        models.ScanJob
+    ).join(
+        models.User
+    ).filter(
+        models.User.campus_id == campus_id
+    ).order_by(
+        models.ScanResult.processed_at.desc()
+    ).limit(limit).all()

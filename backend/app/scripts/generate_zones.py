@@ -107,3 +107,6 @@ if __name__ == "__main__":
     finally: 
         db_session.close()
         print("\nProcess Finished")
+
+    
+    
