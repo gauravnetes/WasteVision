@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from . import campus as campus_schema
-# ---------- Input Schemas ----------
+
 class UserSignUp(BaseModel): 
     name: str 
     email: EmailStr
@@ -43,7 +43,8 @@ class User(BaseModel):
     email: EmailStr                
     is_email_verified: bool
     campus: campus_schema.Campus
-
+    profile_image_url: Optional[str] = None
+    
     class Config: 
         orm_mode = True              # (new name in Pydantic v2 is from_attributes = True)
         from_attributes = True

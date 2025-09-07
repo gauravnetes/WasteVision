@@ -1,7 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
 import os
-from app.core.config import settings
+from settings import settings
 
 SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))

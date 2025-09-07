@@ -17,6 +17,7 @@ class Campus(CampusBase):
     center_latitude: float
     center_longitude: float
     campus_area_sq_meters: Optional[float] = None
+    boundary_padding_meters: int
 
     # This validator is a great way to handle bad data from the DB
     @field_validator("campus_area_sq_meters", mode="before")
@@ -38,3 +39,7 @@ class Campus(CampusBase):
 class CampusLocationUpdate(BaseModel):
     latitude: float
     longitude: float
+    
+class CampusBoundaryUpdate(BaseModel): 
+    boundary_padding: int
+

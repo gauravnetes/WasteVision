@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
-
+from fastapi import HTTPException
 from app.core.database import get_db
 from app.crud import crud_campus
 from app.schemas import campus as campus_schema
+from app.schemas.campus import CampusBoundaryUpdate
 
 from app.models import models
 from app.api import utils
@@ -47,6 +48,39 @@ def update_my_campus_location(
         lon=location_data.longitude
     )
     return updated_campus
+
+@router.put("/me/boundary", response_model=campus_schema.Campus)
+def update_my_campus_boundary(
+    boundary_data: campus_schema.CampusBoundaryUpdate,
+    db: Session = Depends(utils.get_db),
+    current_user: models.User = Depends(utils.get_current_user)
+):
+    updated_campus = crud_campus.update_campus_boundary_padding(
+        db=db,
+        campus_id=current_user.campus_id,
+        boundary_padding=boundary_data.boundary_padding
+    )
+    
+    return updated_campus
+
+
+@router.put("/boundary-padding", response_model=dict)
+def update_boundary_padding(
+    payload: CampusBoundaryUpdate,
+    db: Session = Depends(utils.get_db),
+    current_user: models.User = Depends(utils.get_current_user)
+):
+    campus = crud_campus.get_campus_by_id(db, current_user.campus_id)
+    if not campus:
+        raise HTTPException(status_code=404, detail="Campus not found")
+
+    campus.boundary_padding_meters = payload.boundary_padding
+    db.commit()
+    db.refresh(campus)
+    return {
+        "message": "Boundary padding updated",
+        "boundary_padding": campus.boundary_padding_meters
+    }
 
 @router.get("/test", response_model=dict)
 def test_endpoint():

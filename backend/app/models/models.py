@@ -23,6 +23,8 @@ class Campus(Base):
     center_latitude = Column(Double, nullable=False)
     center_longitude = Column(Double, nullable=False)
     campus_area_sq_meters = Column(Float, nullable=True)
+    
+    boundary_padding_meters = Column(Integer, default = 100, nullable=False)
 
     admin = relationship("User", back_populates="campus", uselist=False)
     zones = relationship("Zone", back_populates="campus")
@@ -36,7 +38,6 @@ class User(Base):
     public_id = Column(UUID(as_uuid=True), default=uuid.uuid4, unique=True, nullable=False, index=True)
     name = Column(String(255), nullable=False)
     email = Column(String(255), unique=True, index=True, nullable=False)
-    profile_image_url = Column(String(512), nullable=True)
     hashed_password = Column(String(255), nullable=False)
     campus_id = Column(Integer, ForeignKey("campuses.id"), unique=True)
     is_email_verified = Column(Boolean, default=False, nullable=False)
@@ -44,7 +45,7 @@ class User(Base):
     verification_code_expires_at = Column(TIMESTAMP, nullable=True)
     reset_password_code = Column(String(6), nullable=True)
     reset_password_code_expires_at = Column(TIMESTAMP, nullable=True)
-
+    profile_image_url = Column(String(512), nullable=True)
     campus = relationship("Campus", back_populates="admin")
 
 class Zone(Base):
