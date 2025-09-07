@@ -95,8 +95,8 @@ names: ['garbage']
 Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/waste-vision.git
-cd waste-vision
+git clone https://github.com/gauravnetes/WasteVision.git
+cd WasteVision
 ```
 
 Install dependencies:
