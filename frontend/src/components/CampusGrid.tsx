@@ -35,15 +35,18 @@ export interface CampusGridProps {
   campusId: string; // no longer optional
   onPreviewOpen?: () => void;
   isPreviewMode?: boolean;
+  zones: Zone[];
+  setZones: React.Dispatch<React.SetStateAction<Zone[]>>;
 }
 
 type LatLngTuple = [number, number];
 
-interface Zone {
+export interface Zone {
   id: string;
   name: string;
   coords: LatLngTuple[];
   originalCoords?: LatLngTuple[];
+  status?: string;
 }
 
 // --- Dynamic Map (no SSR) ---
@@ -82,12 +85,62 @@ function MapController({
       drawCircleMarker: false,
       drawPolyline: false,
       drawRectangle: false,
-      drawPolygon: false,
+      drawPolygon: true,
       drawMarker: false,
       cutPolygon: false,
       editMode: true,
       dragMode: true,
-      removalMode: false,
+      removalMode: true,
+    });
+
+    // Make sure (duplicate) removal mode is enabled and visible in the toolbar
+    // map.pm.Toolbar.createCustomControl({
+    //   name: 'removePolygon',
+    //   block: 'edit',
+    //   title: 'Remove Polygon',
+    //   className: 'leaflet-pm-icon-delete',
+    //   onClick: () => {
+    //     map.pm.enableGlobalRemovalMode();
+    //     setHelperText("Click on a zone to remove it.");
+    //   },
+    //   afterClick: () => {
+    //     // This function is called after the button is clicked
+    //   },
+    // });
+
+    // Handle new polygon creation
+    map.on("pm:create", (e) => {
+      const layer = e.layer;
+      const coords = layer.getLatLngs()[0].map((ll: any) => [ll.lat, ll.lng]);
+
+      // Check if the new zone is within campus boundary
+      const isWithinBoundary = coords.every((coord: LatLngTuple) => {
+        return pointInPolygon(coord, campusBoundary);
+      });
+
+      if (isWithinBoundary) {
+        const newZone: Zone = {
+          id: uuid(),
+          name: `Zone ${zones.length + 1}`,
+          coords: coords as LatLngTuple[],
+        };
+        setZones((prev) => [...prev, newZone]);
+        map.removeLayer(layer);
+      } else {
+        toast.error("New zone must be within campus boundary");
+        map.removeLayer(layer);
+      }
+    });
+
+    // Handle zone removal
+    map.on("pm:remove", (e) => {
+      const layer = e.layer;
+      const coords = layer.getLatLngs()[0].map((ll: any) => [ll.lat, ll.lng]);
+      setZones((prev) =>
+        prev.filter(
+          (zone) => JSON.stringify(zone.coords) !== JSON.stringify(coords)
+        )
+      );
     });
 
     // Set global options for leaflet.pm
@@ -100,8 +153,12 @@ function MapController({
     });
 
     return () => {
-      if (map && map.pm) {
-        map.pm.removeControls();
+      if (map) {
+        if (map.pm) {
+          map.pm.removeControls();
+        }
+        map.off("pm:create");
+        map.off("pm:remove");
       }
     };
   }, [map]);
@@ -354,6 +411,8 @@ export default function CampusGrid({
   campusId,
   isPreviewMode = false,
   onPreviewOpen,
+  zones,
+  setZones,
 }: CampusGridProps): JSX.Element {
   const center = useMemo(
     () => ({ lat: centerLat, lon: centerLon }),
@@ -363,11 +422,12 @@ export default function CampusGrid({
 
   const [isEditing, setIsEditing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
-  const [zones, setZones] = useState<Zone[]>([]);
+  // zones and setZones are now received as props
   const [originalZones, setOriginalZones] = useState<Zone[]>([]);
   const [campusBoundary, setCampusBoundary] = useState<LatLngTuple[]>([]);
   const [helperText, setHelperText] = useState<string>("");
   const [boundaryPadding, setBoundaryPadding] = useState(100);
+  const [showBoundarySlider, setShowBoundarySlider] = useState(false);
 
   const mapRef = useRef<LeafletMap | null>(null);
   const fgRef = useRef<L.FeatureGroup | null>(null);
@@ -391,51 +451,12 @@ export default function CampusGrid({
     };
   }, []);
 
-  // This is the CORRECTED useEffect for the frontend component
-  useEffect(() => {
-    // This function will fetch the latest zone data from your backend
-    const fetchZones = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        // Handle user not being logged in (e.g., redirect)
-        return;
-      }
+  const handleBoundarySave = async () => {
+    await updateBoundaryPadding();
+    // No need to fetch zones here as the parent component will handle that
+  };
 
-      try {
-        const API_BASE =
-          process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
-        const res = await fetch(`${API_BASE}/api/zones/map`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch zone data from the server.");
-        }
-
-        const zonesFromAPI = await res.json();
-
-        // Convert the backend data into the format your frontend state expects
-        const formattedZones = zonesFromAPI.map((zone) => ({
-          id: zone.public_id, // Use the public_id as the unique ID on the frontend
-          name: zone.zone_code,
-          // Leaflet expects [lat, lon], but GeoJSON is [lon, lat], so we swap them.
-          // Also remove the last point which is a duplicate to close the polygon.
-          coords: zone.geo_boundary.coordinates[0]
-            .slice(0, -1)
-            .map((p) => [p[1], p[0]]),
-        }));
-
-        // Set both the display state and the "original" state for future comparisons
-        setZones(formattedZones);
-        setOriginalZones(JSON.parse(JSON.stringify(formattedZones)));
-      } catch (error) {
-        console.error("Error fetching zones:", error);
-        // Show an error toast to the user
-      }
-    };
-
-    fetchZones();
-  }, []); // The empty array [] ensures this effect runs only ONCE when the page loads
+  // The empty array [] ensures this effect runs only ONCE when the page loads
   useEffect(() => {
     // This effect runs only when it has the data it needs from the props.
     // It is responsible for drawing the green dashed boundary.
@@ -456,6 +477,7 @@ export default function CampusGrid({
     ];
     setCampusBoundary(boundary);
   }, [centerLat, centerLon, campusArea, boundaryPadding]);
+
   // --- Helper text ---
   useEffect(() => {
     if (isEditing) {
@@ -491,77 +513,179 @@ export default function CampusGrid({
     toast.success("Zones reset to original state");
   };
 
-  // --- Save zones ---
-const saveZones = async () => {
-  try {
-    const API_BASE =
-      process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
-    const token = localStorage.getItem("token");
-    if (!token) {
-      toast.error("Please sign in.");
-      return;
-    }
-    const modifiedZones = zones.filter((zone) => {
-      const originalZone = originalZones.find((oz) => oz.id === zone.id);
-      if (!originalZone) return true;
-      if (originalZone.coords.length !== zone.coords.length) return true;
-      return zone.coords.some(
-        (c, i) =>
-          c[0] !== originalZone.coords[i][0] ||
-          c[1] !== originalZone.coords[i][1]
-      );
-    });
-    if (modifiedZones.length === 0) {
-      toast.info("No changes detected");
-      return;
-    }
+  // --- Update boundary padding on server ---
+  const updateBoundaryPadding = async () => {
+    try {
+      const API_BASE =
+        process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Please sign in.");
+        return;
+      }
 
-    const loadingToast = toast.loading("Saving zones...");
+      const loadingToast = toast.loading("Updating boundary padding...");
+      if (!boundaryPadding && boundaryPadding !== 0) {
+        toast.error("Boundary padding is required.");
+        return;
+      }
 
-    // --- 👇 THIS IS THE CORRECTED PART ---
-    const payload = modifiedZones.map((zone) => {
-      // Create a new array with the first coordinate added to the end to close the polygon
-      const closedCoords = [...zone.coords, zone.coords[0]];
-
-      return {
-        public_id: zone.id,
-        geo_boundary: {
-          type: "Polygon",
-          // Use the new closedCoords array and swap lat/lon for GeoJSON
-          coordinates: [closedCoords.map((c) => [c[1], c[0]])],
+      const res = await fetch(`${API_BASE}/api/campuses/boundary-padding`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      };
-    });
+        body: JSON.stringify({ boundary_padding: Number(boundaryPadding) }),
+      });
 
-    console.log("Saving zones payload:", payload);
+      const data = await res.json();
+      console.log("API response:", data);
 
-    const res = await fetch(`${API_BASE}/api/zones`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
+      if (!res.ok)
+        throw new Error(data.detail || "Failed to update boundary padding");
 
-    const data = await res.json();
-    console.log("API response:", data);
+      // Update FE state with latest value from backend
+      setBoundaryPadding(data.boundary_padding);
 
-    if (!res.ok) throw new Error(data.detail || "Failed to save zones");
+      // Recompute campusBoundary with new padding
+      if (centerLat && centerLon && campusArea) {
+        const side = Math.sqrt(campusArea);
+        const { degLat, degLon } = metersToDegrees(
+          centerLat,
+          side + data.boundary_padding,
+          side + data.boundary_padding
+        );
+        const newBoundary: LatLngTuple[] = [
+          [centerLat + degLat / 2, centerLon - degLon / 2],
+          [centerLat + degLat / 2, centerLon + degLon / 2],
+          [centerLat - degLat / 2, centerLon + degLon / 2],
+          [centerLat - degLat / 2, centerLon - degLon / 2],
+          [centerLat + degLat / 2, centerLon - degLon / 2],
+        ];
+        setCampusBoundary(newBoundary);
+      }
 
-    setOriginalZones(JSON.parse(JSON.stringify(zones)));
-    toast.dismiss(loadingToast);
-    toast.success(
-      `${modifiedZones.length} zone${
-        modifiedZones.length > 1 ? "s" : ""
-      } updated successfully!`
-    );
-  } catch (err: any) {
-    toast.dismiss();
-    toast.error(`Failed to save zones: ${err.message || "Unknown error"}`);
-    console.error("Save zones error:", err);
-  }
-};
+      toast.dismiss(loadingToast);
+      toast.success(
+        `Campus boundary updated to ${data.boundary_padding} meters!`
+      );
+    } catch (err: any) {
+      toast.dismiss();
+      toast.error(
+        `Failed to update boundary: ${err.message || "Unknown error"}`
+      );
+      console.error("Update boundary error:", err);
+    }
+  };
+
+  // --- Save zones ---
+  const saveZones = async () => {
+    try {
+      const API_BASE =
+        process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Please sign in.");
+        return;
+      }
+
+      // Identify new zones (not in originalZones)
+      const newZones = zones.filter(
+        (zone) => !originalZones.some((oz) => oz.id === zone.id)
+      );
+
+      // Identify deleted zones (in originalZones but not in zones)
+      const deletedZones = originalZones.filter(
+        (oz) => !zones.some((z) => z.id === oz.id)
+      );
+
+      // Identify modified zones (in both but with different coordinates)
+      const modifiedZones = zones.filter((zone) => {
+        const originalZone = originalZones.find((oz) => oz.id === zone.id);
+        if (!originalZone) return false; // Skip new zones, they're handled separately
+        if (originalZone.coords.length !== zone.coords.length) return true;
+        return zone.coords.some(
+          (c, i) =>
+            c[0] !== originalZone.coords[i][0] ||
+            c[1] !== originalZone.coords[i][1]
+        );
+      });
+
+      // If no changes, show message and return
+      if (
+        newZones.length === 0 &&
+        modifiedZones.length === 0 &&
+        deletedZones.length === 0
+      ) {
+        toast.info("No changes detected");
+        return;
+      }
+
+      const loadingToast = toast.loading("Saving zones...");
+
+      // Prepare the payload with all zones (new, modified, and unchanged)
+      // The backend will compare with what's in the database and handle creates/updates/deletes
+      const payload = zones.map((zone) => {
+        // Create a new array with the first coordinate added to the end to close the polygon
+        const closedCoords = [...zone.coords, zone.coords[0]];
+
+        return {
+          public_id: zone.id,
+          name: zone.name,
+          campus_id: campusId,
+          geo_boundary: {
+            type: "Polygon",
+            // Use the new closedCoords array and swap lat/lon for GeoJSON
+            coordinates: [closedCoords.map((c) => [c[1], c[0]])],
+          },
+        };
+      });
+
+      console.log("Saving zones payload:", payload);
+
+      const res = await fetch(`${API_BASE}/api/zones/bulk/${campusId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      console.log("API response:", data);
+
+      if (!res.ok) throw new Error(data.detail || "Failed to save zones");
+
+      // Update originalZones to match the current state
+      setOriginalZones(JSON.parse(JSON.stringify(zones)));
+      toast.dismiss(loadingToast);
+
+      // Show success message with details about what changed
+      let successMessage = "";
+      if (newZones.length > 0) {
+        successMessage += `${newZones.length} new zone${
+          newZones.length > 1 ? "s" : ""
+        } created. `;
+      }
+      if (modifiedZones.length > 0) {
+        successMessage += `${modifiedZones.length} zone${
+          modifiedZones.length > 1 ? "s" : ""
+        } updated. `;
+      }
+      if (deletedZones.length > 0) {
+        successMessage += `${deletedZones.length} zone${
+          deletedZones.length > 1 ? "s" : ""
+        } deleted. `;
+      }
+      toast.success(successMessage || "Zones saved successfully!");
+    } catch (err: any) {
+      toast.dismiss();
+      toast.error(`Failed to save zones: ${err.message || "Unknown error"}`);
+      console.error("Save zones error:", err);
+    }
+  };
 
   return (
     <div className="relative w-full h-full flex flex-col">
@@ -593,23 +717,34 @@ const saveZones = async () => {
         )}
         {/* Zones */}
         <FeatureGroup ref={(fg) => (fgRef.current = fg)}>
-          {zones.map((zone) => (
-            <Polygon
-              key={zone.id}
-              positions={zone.coords}
-              pathOptions={{
-                color: isEditing ? "#f97316" : isMoving ? "#6366f1" : "#38bdf8",
-                weight: 2,
-                fillOpacity: 0.1,
-              }}
-              ref={(poly) => {
-                if (poly && isMounted.current)
-                  polygonRefs.current[zone.id] = poly;
-              }}
-            >
-              <Tooltip sticky={true as any}>{zone.name}</Tooltip>
-            </Polygon>
-          ))}
+          {zones.map((zone) => {
+            // Dynamic color based on zone status
+            const getStatusColor = (status: string) => {
+              if (status === 'Red') return '#ef4444'; // Red
+              if (status === 'Yellow') return '#f59e0b'; // Amber/Yellow
+              return '#38bdf8'; // Default/Green/Blue
+            };
+            
+            const color = getStatusColor(zone.status);
+            
+            return (
+              <Polygon
+                key={zone.id}
+                positions={zone.coords}
+                pathOptions={{
+                  color: isEditing ? '#f97316' : isMoving ? '#6366f1' : color,
+                  weight: 2,
+                  fillOpacity: 0.2, // Increased for better visibility
+                }}
+                ref={(poly) => {
+                  if (poly && isMounted.current)
+                    polygonRefs.current[zone.id] = poly;
+                }}
+              >
+                <Tooltip sticky={true as any}>{zone.name}</Tooltip>
+              </Polygon>
+            );
+          })}
         </FeatureGroup>
         Map Controller for editing and moving
         {(isEditing || isMoving) && !isPreviewMode && (
@@ -631,12 +766,69 @@ const saveZones = async () => {
         </div>
       )}
 
+      {/* Boundary Slider */}
+      <div className="flex items-center justify-center gap-2 mt-4">
+        <div className="flex items-center gap-2 bg-gray-100 p-2 rounded-md">
+          <span className="text-sm text-black font-medium">Boundary Size:</span>
+          <input
+            type="range"
+            min="50"
+            max="300"
+            value={boundaryPadding}
+            onChange={(e) => setBoundaryPadding(Number(e.target.value))}
+            className="w-48"
+          />
+          <span className="text-sm text-gray-600">{boundaryPadding}m</span>
+          <button
+            onClick={handleBoundarySave}
+            className="flex items-center gap-1.5 px-3 py-1 bg-purple-400 hover:bg-zinc-800 text-sm text-white hover:text-purple-400 transition-all duration-500 rounded-md"
+          >
+            Save Boundary
+          </button>
+        </div>
+      </div>
+
+      {/* Zone Management Buttons */}
+      {isEditing && (
+        <div className="flex justify-center font-semibold gap-4 mt-4">
+          <button
+            onClick={() => {
+              if (mapRef.current) {
+                mapRef.current.pm.enableDraw("Polygon");
+                setHelperText(
+                  "Draw a new zone by clicking points on the map. Complete by clicking the first point again."
+                );
+              }
+            }}
+            className="flex items-center gap-1.5 px-4 py-2 bg-blue-400 hover:bg-zinc-800 text-sm text-white hover:text-blue-400 transition-all duration-500 rounded-md"
+          >
+            + Add Zone
+          </button>
+          <button
+            onClick={() => {
+              if (mapRef.current) {
+                mapRef.current.pm.enableGlobalRemovalMode();
+                setHelperText("Click on a zone to remove it.");
+              }
+            }}
+            className="flex items-center gap-1.5 px-4 py-2 bg-red-400 hover:bg-zinc-800 text-sm text-white hover:text-red-400 transition-all duration-500 rounded-md"
+          >
+            - Remove Zone
+          </button>
+        </div>
+      )}
+
       {/* Control buttons */}
       <div className="flex justify-center font-semibold gap-4 mt-4 mb-2">
         <button
           onClick={() => {
             setIsEditing((prev) => !prev);
             if (isMoving) setIsMoving(false);
+            // Disable any active drawing or removal modes when toggling edit mode
+            if (mapRef.current && mapRef.current.pm) {
+              mapRef.current.pm.disableDraw();
+              mapRef.current.pm.disableGlobalRemovalMode();
+            }
           }}
           className="flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-zinc-800 text-sm transition-all duration-500 text-black hover:text-white rounded-md"
         >

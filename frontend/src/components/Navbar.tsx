@@ -26,9 +26,7 @@ export default function Navbar() {
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
 
-  // extra frontend-only fields
-  const [bio, setBio] = useState("");
-  const [status, setStatus] = useState("Available");
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -39,7 +37,7 @@ export default function Navbar() {
       }
 
       try {
-        const res = await fetch("http://localhost:8000/api/users/me", {
+        const res = await fetch(`${API_BASE}/api/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -63,7 +61,7 @@ export default function Navbar() {
     };
 
     fetchUser();
-  }, []);
+  }, [API_BASE]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -95,9 +93,9 @@ export default function Navbar() {
         formData.append("file", fileToUpload);
 
         const uploadRes = await fetch(
-          "http://localhost:8000/api/users/upload-avatar",
+          `${API_BASE}/api/users/me/profile-image`,
           {
-            method: "POST",
+            method: "PUT",
             headers: { Authorization: `Bearer ${token}` },
             body: formData,
           }
@@ -109,10 +107,10 @@ export default function Navbar() {
         }
 
         const uploadData = await uploadRes.json();
-        pictureUrl = uploadData.picture;
+        pictureUrl = uploadData.picture || pictureUrl;
       }
 
-      const res = await fetch("http://localhost:8000/api/users/me", {
+      const res = await fetch(`${API_BASE}/api/users/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -125,7 +123,10 @@ export default function Navbar() {
         }),
       });
 
-      if (!res.ok) throw new Error("Failed to update profile");
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Profile update failed: ${errorText}`);
+      }
 
       const updated = await res.json();
       setUser(updated);
@@ -153,7 +154,6 @@ export default function Navbar() {
           <ThemeToggleButton />
         </div>
 
-        {/* Transparent container with balanced blobs */}
         <div className="relative flex justify-center items-center w-72 h-20 mt-4">
           <Link href="/">
             <Image
@@ -168,11 +168,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div
-        className="flex items-center gap-6 px-7 py-5 rounded-full border  
-                      bg-white/5 backdrop-blur-md shadow-lg font-bold "
-      >
-        {/* Nav Links */}
+      <div className="flex items-center gap-6 px-7 py-5 rounded-full border bg-white/5 backdrop-blur-md shadow-lg font-bold">
         <Link
           href="/"
           className="text-black dark:text-white font-handwriting transition"
@@ -208,11 +204,9 @@ export default function Navbar() {
           <PopoverContent
             side="bottom"
             align="end"
-            className="flex w-[70vw] max-w-[1000px] h-[480px] rounded-3xl bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border border-gray-200 dark:border-gray-700 shadow-2xl p-6 gap-6"
+            className="flex w-[70vw] max-w-[1000px] h-[400px] rounded-3xl bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border border-gray-200 dark:border-gray-700 shadow-2xl p-6 gap-6"
           >
-            {/* Left: Avatar & Identity */}
             <div className="flex flex-col items-center justify-center w-1/3 border-r border-white/20 dark:border-gray-700 pr-6 py-8 gap-4">
-              {/* Avatar */}
               <Image
                 src={user.picture}
                 alt="Avatar"
@@ -221,7 +215,6 @@ export default function Navbar() {
                 className="rounded-full object-cover border-4 border-white shadow-md dark:border-gray-600"
               />
 
-              {/* Change Photo Button */}
               <label
                 htmlFor="profilePic"
                 className="cursor-pointer px-5 py-2 bg-green-600 text-white rounded-full text-sm font-medium shadow hover:bg-green-700 transition duration-200"
@@ -236,7 +229,6 @@ export default function Navbar() {
                 className="hidden"
               />
 
-              {/* Identity Details */}
               <div className="text-center">
                 <p className="text-xl font-semibold text-gray-900 dark:text-white">
                   {user.name}
@@ -246,7 +238,6 @@ export default function Navbar() {
                 </p>
               </div>
 
-              {/* Verification Badge */}
               <span
                 className={`px-3 py-1 text-xs font-medium rounded-full ${
                   user.is_email_verified
@@ -258,7 +249,6 @@ export default function Navbar() {
               </span>
             </div>
 
-            {/* Right: Profile Details */}
             <div className="flex flex-col justify-between w-2/3 h-full">
               <div className="grid grid-cols-2 gap-4">
                 {["name", "email", "state", "campus"].map((field) => (
@@ -280,39 +270,8 @@ export default function Navbar() {
                     />
                   </div>
                 ))}
-
-                {/* Bio */}
-                <div className="col-span-2 flex flex-col">
-                  <label className="text-gray-800 dark:text-gray-200 font-semibold mb-1">
-                    Bio
-                  </label>
-                  <textarea
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    placeholder="Write something about yourself..."
-                    rows={3}
-                    className={glassInputClass + " resize-none"}
-                  />
-                </div>
-
-                {/* Status */}
-                <div className="col-span-2 flex flex-col">
-                  <label className="text-gray-800 dark:text-gray-200 font-semibold mb-1">
-                    Status
-                  </label>
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    className={glassInputClass}
-                  >
-                    <option>Available</option>
-                    <option>Busy</option>
-                    <option>Away</option>
-                  </select>
-                </div>
               </div>
 
-              {/* Actions */}
               <div className="flex justify-end gap-3 mt-4">
                 <ShimmerButton
                   onClick={handleSave}
